@@ -124,7 +124,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     #grid = grid.cuda()  # [bs, c, h, w, 3], [0, 1]
     #image = image.cuda()  # [bs, c, h, w, 1], [0, 1]
     
-    image = torch.from_numpy(np.expand_dims(np.load(img_path)[args.im_ind],(0,-1))).cuda(args.gpu_id)
+    image = torch.from_numpy(np.expand_dims(np.load(img_path)[args.im_ind],(0,-1)).astype('float32')).cuda(args.gpu_id)
     grid_np = np.asarray([(x,y,z) for x in range(128) for y in range(128) for z in range(64)]).reshape((1,128,128,64,3))
     grid_np = (grid_np/np.array([128,128,64])) + np.array([1/256.0,1/256.0,1/128.0])
     grid = torch.from_numpy(grid_np.astype('float32')).cuda(args.gpu_id)
