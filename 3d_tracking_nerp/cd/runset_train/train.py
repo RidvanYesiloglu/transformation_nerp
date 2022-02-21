@@ -30,7 +30,7 @@ def update_runset_summary(args, runset_folder):
 
 def main(args=None, im_ind=None):
     params_dict = parameters.decode_arguments_dictionary('params_dictionary')
-    working_dir = '/home/yesiloglu/projects/3d_tracking_nerp'
+    working_dir = '/home/yesiloglu/projects/transformation_nerp/tracking_models/'
     if args is None: #if slurm:
         args = parameters.get_arguments(params_dict)
     repr_str = parameters.create_repr_str(args, [info.name for info in params_dict.param_infos], wantShort=True, params_dict=params_dict)
