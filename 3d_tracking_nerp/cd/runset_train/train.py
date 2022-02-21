@@ -100,17 +100,6 @@ def main(args=None, im_ind=None):
         for t in tqdm(range(args.max_iter)):
             preruni_dict['model'].train()
             preruni_dict['optim'].zero_grad()
-            if t == 0:
-                with torch.no_grad():
-                    test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-            
-                    test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-                    test_psnr = - 10 * torch.log10(2 * test_loss).item()
-                    test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
-                    print('PRETRAIN MODEL PSNR 2:')
-                    print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
-                    
-                    test_loss = test_loss.item()
             # print('LATEST')
             # check_gpu(args.gpu_id)
             train_output = preruni_dict['model'](preruni_dict['train_embedding'])  # [B, C, H, W, 1]
@@ -123,30 +112,8 @@ def main(args=None, im_ind=None):
             elif args.priEmOrTra == 1: # prior embedding
                 train_loss = preruni_dict['mse_loss_fn'](train_output, preruni_dict['test_data'][1])
                 
-            if t == 0:
-                with torch.no_grad():
-                    test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-            
-                    test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-                    test_psnr = - 10 * torch.log10(2 * test_loss).item()
-                    test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
-                    print('PRETRAIN MODEL PSNR 3:')
-                    print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
-                    
-                    test_loss = test_loss.item()
             train_loss.backward()
             preruni_dict['optim'].step()
-            if t == 0:
-                with torch.no_grad():
-                    test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-            
-                    test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-                    test_psnr = - 10 * torch.log10(2 * test_loss).item()
-                    test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
-                    print('PRETRAIN MODEL PSNR 4:')
-                    print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
-                    
-                    test_loss = test_loss.item()
             # Add loss to the losses list for r
             losses_r.append(train_loss.item())
             
