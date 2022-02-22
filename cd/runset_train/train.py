@@ -84,30 +84,33 @@ def main(args=None, im_ind=None):
         check_gpu(args.gpu_id)
         psnrs_r = [] 
         losses_r = []
+        print('before init psnr calc')
+        check_gpu(args.gpu_id)
         start_time = time.time()
         
-        # with torch.no_grad():
-        #     deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-        #     deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
-        #     test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
-        #     test_psnr = - 10 * torch.log10(test_loss).item()
-        #     print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
+        with torch.no_grad():
+            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
+            test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
+            test_psnr = - 10 * torch.log10(test_loss).item()
+            print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
             
             # test_loss = test_loss.item()
-        torch.cuda.empty_cache()
+        print('after init psnr calc')
+        check_gpu(args.gpu_id)
         for t in tqdm(range(args.max_iter)):
             print('T=',t)
-            torch.cuda.empty_cache()
             preruni_dict['model'].train()
             preruni_dict['optim'].zero_grad()
             # print('LATEST')
             # check_gpu(args.gpu_id)
             deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-            torch.cuda.empty_cache()
             deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
             train_loss.backward()
+            print('after i backward')
+            check_gpu(args.gpu_id)
             preruni_dict['optim'].step()
             # Add loss to the losses list for r
             losses_r.append(train_loss.item())
