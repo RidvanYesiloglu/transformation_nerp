@@ -103,7 +103,7 @@ def main(args=None, im_ind=None):
             # print('LATEST')
             # check_gpu(args.gpu_id)
             deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-            deformed_prior = preruni_dict['model_Pfs'](preruni_dict['encoder_Pfs'](deformed_grid))
+            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'](deformed_grid))
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
             train_loss.backward()
@@ -112,9 +112,9 @@ def main(args=None, im_ind=None):
             losses_r.append(train_loss.item())
             
             with torch.no_grad():
-                test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-        
-                test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
+                deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+                deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'](deformed_grid))
+                test_loss = 0.5*preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 test_psnr = - 10 * torch.log10(2 * test_loss).item()
                 #test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
                 #print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
