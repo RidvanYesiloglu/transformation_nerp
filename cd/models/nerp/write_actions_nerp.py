@@ -81,6 +81,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     # print('GPU 3 aftr model load:')
     # check_gpu(3)
     ########################
+    args.net['network_output_size']=1
     # Setup input encoder:
     encoder_Pus = Positional_Encoder(args)
     # Setup model
@@ -116,6 +117,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     print('Load pretrain model: {}'.format(model_path))
     for param in model_Ius.parameters():
         param.requires_grad = False
+    args.net['network_output_size']=3
     # Setup loss function
     mse_loss_fn = torch.nn.MSELoss()
     
