@@ -103,6 +103,7 @@ def main(args=None, im_ind=None):
             # print('LATEST')
             # check_gpu(args.gpu_id)
             deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            torch.cuda.empty_cache()
             deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
