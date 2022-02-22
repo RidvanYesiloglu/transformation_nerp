@@ -147,13 +147,21 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     # save_image_3d(test_data[1], slice_idx, os.path.join(image_directory, "test.png"))
     # save_image_3d(complex2real(train_data[1]), slice_idx, os.path.join(image_directory, "train.png"))
     # save_image_3d(complex2real(spectrum), slice_idx, os.path.join(image_directory, "spec.png"))
+    print('**before emb**')
+    check_gpu(args.gpu_id)
     train_embedding = encoder.embedding(grid)  # [B, C, H, W, embedding*2]
     test_embedding = encoder.embedding(grid)
+    print('**before emb 2**')
+    check_gpu(args.gpu_id)
     train_embedding_Pus = encoder_Pus.embedding(grid)  # [B, C, H, W, embedding*2]
     test_embedding_Pus = encoder_Pus.embedding(grid)
+    print('**before emb3**')
+    check_gpu(args.gpu_id)
     train_embedding_Ius = encoder_Ius.embedding(grid)  # [B, C, H, W, embedding*2]
     test_embedding_Ius = encoder_Ius.embedding(grid)
-
+    print('**after all emb**')
+    check_gpu(args.gpu_id)
+    
     init_thetas_str = "Run no: {}\n".format(inps_dict['run_number']) + '\n'
     init_psnr_str = 'Initial psnr: {:.4f} \n'.format(1)
     
