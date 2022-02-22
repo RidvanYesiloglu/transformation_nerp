@@ -88,7 +88,7 @@ def main(args=None, im_ind=None):
         
         with torch.no_grad():
             deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'](deformed_grid))
+            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
             test_psnr = - 10 * torch.log10(test_loss).item()
             print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
@@ -101,7 +101,7 @@ def main(args=None, im_ind=None):
             # print('LATEST')
             # check_gpu(args.gpu_id)
             deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'](deformed_grid))
+            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
             train_loss.backward()
@@ -111,7 +111,7 @@ def main(args=None, im_ind=None):
             
             with torch.no_grad():
                 deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-                deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'](deformed_grid))
+                deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
                 test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 test_psnr = - 10 * torch.log10(test_loss).item()
                 #test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
@@ -124,7 +124,7 @@ def main(args=None, im_ind=None):
                     os.remove(filename)
                 for filename in glob.glob(os.path.join(save_folder, 'savedrec_run{}*'.format(run_number))):
                     os.remove(filename)
-                np.save(os.path.join(save_folder,'savedrec_run{}_ep{}_{:.4g}dB'.format(run_number, t+1, test_psnr)), test_output.detach().cpu().numpy())
+                #np.save(os.path.join(save_folder,'savedrec_run{}_ep{}_{:.4g}dB'.format(run_number, t+1, test_psnr)), test_output.detach().cpu().numpy())
                 model_name = os.path.join(save_folder, 'savedmodel_run{}_ep{}_{:.4g}dB.pt'.format(run_number, t+1, test_psnr))
                 torch.save({'net': preruni_dict['model'].state_dict(), \
                         'enc': preruni_dict['encoder'].B, \
