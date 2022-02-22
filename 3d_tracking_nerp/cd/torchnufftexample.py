@@ -15,10 +15,10 @@ import torchkbnufft as tkbn
 
 def project_radial(image, ktraj, im_size, grid_size):
     #print('image shape was ', image.shape)
-    #image  = image.permute((3,0,1,2,4)).squeeze(-1) #if nn
-    image  = image.permute((3,0,1,2))#.squeeze(-1)
+    image  = image.permute((3,0,1,2,4)).squeeze(-1) #if nn
+    #image  = image.permute((3,0,1,2))#.squeeze(-1)
     #image.retain_grad()
-    #image = torch.stack((image, image*0),-1)
+    image = torch.stack((image, image*0),-1)
     #image.retain_grad()
     #print('now image shape', image.shape)
     # create NUFFT objects, use 'ortho' for orthogonal FFTs
