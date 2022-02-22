@@ -86,14 +86,14 @@ def main(args=None, im_ind=None):
         losses_r = []
         start_time = time.time()
         
-        with torch.no_grad():
-            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
-            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
-            test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
-            test_psnr = - 10 * torch.log10(test_loss).item()
-            print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
+        # with torch.no_grad():
+        #     deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+        #     deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
+        #     test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
+        #     test_psnr = - 10 * torch.log10(test_loss).item()
+        #     print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
             
-            test_loss = test_loss.item()
+            # test_loss = test_loss.item()
         torch.cuda.empty_cache()
         for t in tqdm(range(args.max_iter)):
             print('T=',t)
