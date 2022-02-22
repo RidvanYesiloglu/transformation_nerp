@@ -94,8 +94,10 @@ def main(args=None, im_ind=None):
             print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
             
             test_loss = test_loss.item()
-            
+        torch.cuda.empty_cache()
         for t in tqdm(range(args.max_iter)):
+            print('T=',t)
+            torch.cuda.empty_cache()
             preruni_dict['model'].train()
             preruni_dict['optim'].zero_grad()
             # print('LATEST')
