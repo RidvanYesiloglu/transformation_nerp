@@ -102,15 +102,9 @@ def main(args=None, im_ind=None):
             preruni_dict['optim'].zero_grad()
             # print('LATEST')
             # check_gpu(args.gpu_id)
-            train_output = preruni_dict['model'](preruni_dict['train_embedding'])  # [B, C, H, W, 1]
-            if args.priEmOrTra == 2: # network training
-                train_kdata = project_radial(train_output, preruni_dict['ktraj'], preruni_dict['im_size'], preruni_dict['grid_size'])
-                #train_spec = mri_fourier_transform_3d(train_output)  # [B, H, W, C]
-                #train_spec = train_spec * preruni_dict['mask'][None, ..., None]
-                train_loss = preruni_dict['mse_loss_fn'](train_kdata, preruni_dict['train_data'][1])
-    
-            elif args.priEmOrTra == 1: # prior embedding
-                train_loss = preruni_dict['mse_loss_fn'](train_output, preruni_dict['test_data'][1])
+            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            deformed_prior = preruni_dict['model_Pfs'](preruni_dict['encoder_Pfs'](deformed_grid))
+            train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
             train_loss.backward()
             preruni_dict['optim'].step()
