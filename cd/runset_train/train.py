@@ -100,7 +100,7 @@ def main(args=None, im_ind=None):
         print('after init psnr calc')
         check_gpu(args.gpu_id)
         for t in tqdm(range(args.max_iter)):
-            print('T=',t)
+            #print('T=',t)
             preruni_dict['model'].train()
             preruni_dict['optim'].zero_grad()
             # print('LATEST')
@@ -110,8 +110,8 @@ def main(args=None, im_ind=None):
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['im_Ius'])
                 
             train_loss.backward()
-            print('after i backward')
-            check_gpu(args.gpu_id)
+            # print('after i backward')
+            # check_gpu(args.gpu_id)
             preruni_dict['optim'].step()
             # Add loss to the losses list for r
             losses_r.append(train_loss.item())
