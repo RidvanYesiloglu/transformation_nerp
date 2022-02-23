@@ -96,6 +96,11 @@ def main(args=None, im_ind=None):
             print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
             
             test_loss = test_loss.item()
+            
+            duz_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(preruni_dict['grid']))
+            test_loss2 = preruni_dict['mse_loss_fn'](duz_prior, preruni_dict['im_Ius'])
+            test_psnr2 = - 10 * torch.log10(test_loss2).item()
+            print('Plain Prior PSNR: {:.5f}'.format(test_psnr2))
         torch.cuda.empty_cache()
         print('after init psnr calc')
         check_gpu(args.gpu_id)
