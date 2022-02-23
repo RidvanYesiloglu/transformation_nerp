@@ -8,7 +8,7 @@ from networks import Positional_Encoder, FFN, SIREN
 from utils import prepare_sub_folder, mri_fourier_transform_3d, complex2real, random_sample_uniform_mask, random_sample_gaussian_mask, save_image_3d, PSNR, check_gpu
 
 from torchnufftexample import create_radial_mask, project_radial, backproject_radial
-
+import sys
 # inps_dict: {'save_folder': save_folder, 'args':args, 'repr_str':repr_str, 'device':device}
 # outs_dict: {'mean_f_zk':mean_f_zk, 'log_mean_f_zk':log_mean_f_zk, 'final_f_zk_vals':final_f_zk_vals, 'final_thetas':final_thetas}
 def preallruns_actions(inps_dict):
@@ -67,17 +67,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     model.train()
     # Setup optimizer
     optim = torch.optim.Adam(model.parameters(), lr=args.lr, betas=(args.beta1, args.beta2), weight_decay=args.weight_decay)
-    # Load pretrain model
-    if args.pretrain:
-        model_path = args.pretrain_model_path#.format(config['data'], config['img_size'], \
-                        #config['model'], config['net']['network_width'], config['net']['network_depth'], \
-                        #config['encoder']['scale'])
-        state_dict = torch.load(model_path, map_location=lambda storage, loc: storage.cuda(args.gpu_id))
-        model.load_state_dict(state_dict['net'])
-        encoder.B = state_dict['enc'].cuda(args.gpu_id)
-        model = model.cuda(args.gpu_id)
-        #optim.load_state_dict(state_dict['opt'])
-        print('Load pretrain model: {}'.format(model_path))
+    
     # print('GPU 3 aftr model load:')
     # check_gpu(3)
     ########################
@@ -162,6 +152,26 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     im_Ius = torch.from_numpy(np.load('../Ius_models/im70_10p_ep2385_27.88dB.npy').astype('float32')).cuda(args.gpu_id)
     print('**after all emb**')
     check_gpu(args.gpu_id)
+    
+    # Load pretrain model
+    if args.pretrain:
+        model_path = args.pretrain_model_path#.format(config['data'], config['img_size'], \
+                        #config['model'], config['net']['network_width'], config['net']['network_depth'], \
+                        #config['encoder']['scale'])
+        state_dict = torch.load(model_path, map_location=lambda storage, loc: storage.cuda(args.gpu_id))
+        model.load_state_dict(state_dict['net'])
+        encoder.B = state_dict['enc'].cuda(args.gpu_id)
+        model = model.cuda(args.gpu_id)
+        #optim.load_state_dict(state_dict['opt'])
+        print('Load pretrain model: {}'.format(model_path))
+        with torch.no_grad():
+            deformed_grid = grid + (model(train_embedding))  # [B, C, H, W, 1]
+            deformed_prior = model_Pus(encoder_Pus.embedding(deformed_grid))
+            plain_prior = model_Pus(encoder_Pus.embedding(grid))
+        np.save('/home/yesiloglu/projects/transformation_nerp/transformation_models/priors/deformed_prior.npy',deformed_prior.detach().cpu().numpy())
+        np.save('/home/yesiloglu/projects/transformation_nerp/transformation_models/priors/plain_prior.npy',plain_prior.detach().cpu().numpy())
+        print('Saved, exiting')
+        sys.exit()
     
     init_thetas_str = "Run no: {}\n".format(inps_dict['run_number']) + '\n'
     init_psnr_str = 'Initial psnr: {:.4f} \n'.format(1)
