@@ -159,7 +159,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     check_gpu(args.gpu_id)
     #train_embedding_Ius = encoder_Ius.embedding(grid)  # [B, C, H, W, embedding*2]
     # test_embedding_Ius = encoder_Ius.embedding(grid)
-    im_Ius = torch.from_numpy(np.load('../Ius_models/im70_10p_rec_n350.npy').astype('float32')).cuda(args.gpu_id)
+    im_Ius = torch.from_numpy(np.load('../Ius_models/im70_10p_ep2385_27.88dB.npy').astype('float32')).cuda(args.gpu_id)
     print('**after all emb**')
     check_gpu(args.gpu_id)
     
