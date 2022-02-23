@@ -149,7 +149,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     # save_image_3d(complex2real(spectrum), slice_idx, os.path.join(image_directory, "spec.png"))
     print('**before emb**')
     check_gpu(args.gpu_id)
-    #train_embedding = encoder.embedding(grid)  # [B, C, H, W, embedding*2]
+    train_embedding = encoder.embedding(grid)  # [B, C, H, W, embedding*2]
     #test_embedding = encoder.embedding(grid)
     print('**before emb 2**')
     check_gpu(args.gpu_id)
@@ -177,7 +177,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     main_logs.write(init_psnr_str)
     main_logs.close()
     preruni_dict={'model':model, 'model_Pus':model_Pus, 'model_Ius':model_Ius, 'grid':grid, 'train_embedding_Ius':train_embedding_Ius,\
-                  'encoder_Pus':encoder_Pus,'spec_loss_fn':spec_loss_fn,\
+                  'encoder_Pus':encoder_Pus,'spec_loss_fn':spec_loss_fn,'train_embedding':train_embedding,\
                   'encoder':encoder, 'mse_loss_fn':mse_loss_fn, 'slice_idx':slice_idx, 'image_directory':image_directory, \
                       'checkpoint_directory':checkpoint_directory, 'optim':optim}
     if args.pretrain:
