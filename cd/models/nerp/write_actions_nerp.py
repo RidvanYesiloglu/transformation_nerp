@@ -99,24 +99,24 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     print('Load pretrain model: {}'.format(model_path))
     for param in model_Pus.parameters():
         param.requires_grad = False
-    ########################
-    # Setup input encoder:
-    encoder_Ius = Positional_Encoder(args)
-    # Setup model
-    model_Ius = SIREN(args.net)
-    model_Ius.cuda(args.gpu_id)
-    # Load pretrain model
-    model_path = args.Ius_model_path#.format(config['data'], config['img_size'], \
-                    #config['model'], config['net']['network_width'], config['net']['network_depth'], \
-                    #config['encoder']['scale'])
-    state_dict = torch.load(model_path, map_location=lambda storage, loc: storage.cuda(args.gpu_id))
-    model_Ius.load_state_dict(state_dict['net'])
-    encoder_Ius.B = state_dict['enc'].cuda(args.gpu_id)
-    model_Ius = model_Ius.cuda(args.gpu_id)
-    #optim.load_state_dict(state_dict['opt'])
-    print('Load pretrain model: {}'.format(model_path))
-    for param in model_Ius.parameters():
-        param.requires_grad = False
+    # ########################
+    # # Setup input encoder:
+    # encoder_Ius = Positional_Encoder(args)
+    # # Setup model
+    # model_Ius = SIREN(args.net)
+    # model_Ius.cuda(args.gpu_id)
+    # # Load pretrain model
+    # model_path = args.Ius_model_path#.format(config['data'], config['img_size'], \
+    #                 #config['model'], config['net']['network_width'], config['net']['network_depth'], \
+    #                 #config['encoder']['scale'])
+    # state_dict = torch.load(model_path, map_location=lambda storage, loc: storage.cuda(args.gpu_id))
+    # model_Ius.load_state_dict(state_dict['net'])
+    # encoder_Ius.B = state_dict['enc'].cuda(args.gpu_id)
+    # model_Ius = model_Ius.cuda(args.gpu_id)
+    # #optim.load_state_dict(state_dict['opt'])
+    # print('Load pretrain model: {}'.format(model_path))
+    # for param in model_Ius.parameters():
+    #     param.requires_grad = False
     args.net['network_output_size']=3
     # Setup loss function
     mse_loss_fn = torch.nn.MSELoss()
@@ -157,8 +157,9 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     #test_embedding_Pus = encoder_Pus.embedding(grid)
     print('**before emb3**')
     check_gpu(args.gpu_id)
-    train_embedding_Ius = encoder_Ius.embedding(grid)  # [B, C, H, W, embedding*2]
+    #train_embedding_Ius = encoder_Ius.embedding(grid)  # [B, C, H, W, embedding*2]
     # test_embedding_Ius = encoder_Ius.embedding(grid)
+    im_Ius = torch.from_numpy(np.load('../Ius_models/im70_10p_rec_n350.npy').astype('float32')).cuda(args.gpu_id)
     print('**after all emb**')
     check_gpu(args.gpu_id)
     
@@ -176,7 +177,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     main_logs.write(init_thetas_str)
     main_logs.write(init_psnr_str)
     main_logs.close()
-    preruni_dict={'model':model, 'model_Pus':model_Pus, 'model_Ius':model_Ius, 'grid':grid, 'train_embedding_Ius':train_embedding_Ius,\
+    preruni_dict={'model':model, 'model_Pus':model_Pus, 'grid':grid,'im_Ius':im_Ius,\
                   'encoder_Pus':encoder_Pus,'spec_loss_fn':spec_loss_fn,'train_embedding':train_embedding,\
                   'encoder':encoder, 'mse_loss_fn':mse_loss_fn, 'slice_idx':slice_idx, 'image_directory':image_directory, \
                       'checkpoint_directory':checkpoint_directory, 'optim':optim}
