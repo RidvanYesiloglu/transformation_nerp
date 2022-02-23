@@ -168,6 +168,11 @@ def prerun_i_actions(inps_dict, preallruns_dict):
             deformed_grid = grid + (model(train_embedding))  # [B, C, H, W, 1]
             deformed_prior = model_Pus(encoder_Pus.embedding(deformed_grid))
             plain_prior = model_Pus(encoder_Pus.embedding(grid))
+        image = torch.from_numpy(np.expand_dims(np.load('../../data73/ims_tog.npy')[70],(0,-1)).astype('float32')).cuda(args.gpu_id)
+        def_psnr = - 10 * torch.log10(mse_loss_fn(deformed_prior, image)).item()
+        pla_psnr = - 10 * torch.log10(mse_loss_fn(plain_prior, image)).item()
+        print('PLain PSNR: {:.5f}, Deformed PSNR: {:.5f}'.format(pla_psnr, def_psnr))
+        
         np.save('/home/yesiloglu/projects/transformation_nerp/priors/deformed_prior.npy',deformed_prior.detach().cpu().numpy())
         np.save('/home/yesiloglu/projects/transformation_nerp/priors/plain_prior.npy',plain_prior.detach().cpu().numpy())
         print('Saved, exiting')
