@@ -168,8 +168,8 @@ def prerun_i_actions(inps_dict, preallruns_dict):
             deformed_grid = grid + (model(train_embedding))  # [B, C, H, W, 1]
             deformed_prior = model_Pus(encoder_Pus.embedding(deformed_grid))
             plain_prior = model_Pus(encoder_Pus.embedding(grid))
-        np.save('/home/yesiloglu/projects/transformation_nerp/transformation_models/priors/deformed_prior.npy',deformed_prior.detach().cpu().numpy())
-        np.save('/home/yesiloglu/projects/transformation_nerp/transformation_models/priors/plain_prior.npy',plain_prior.detach().cpu().numpy())
+        np.save('/home/yesiloglu/projects/transformation_nerp/priors/deformed_prior.npy',deformed_prior.detach().cpu().numpy())
+        np.save('/home/yesiloglu/projects/transformation_nerp/priors/plain_prior.npy',plain_prior.detach().cpu().numpy())
         print('Saved, exiting')
         sys.exit()
     
