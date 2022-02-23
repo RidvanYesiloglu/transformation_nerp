@@ -184,7 +184,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
                       'checkpoint_directory':checkpoint_directory, 'encoder':encoder, 'optim':optim}
     if args.pretrain:
         with torch.no_grad():
-            test_output = preruni_dict['model'](preruni_dict['test_embedding'])
+            test_output = preruni_dict['model'](preruni_dict['train_embedding'])
     
             test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
             test_psnr = - 10 * torch.log10(2 * test_loss).item()
@@ -207,7 +207,7 @@ def write_freq_actions(inps_dict, preruni_dict):
     
     preruni_dict['model'].eval()
     with torch.no_grad():
-        test_output = preruni_dict['model'](preruni_dict['test_embedding'])
+        test_output = preruni_dict['model'](preruni_dict['train_embedding'])
 
         test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
         test_psnr = - 10 * torch.log10(2 * test_loss).item()
@@ -240,7 +240,7 @@ def postrun_i_actions(inps_dict, preallruns_dict, preruni_dict):
 
     preruni_dict['model'].eval()
     with torch.no_grad():
-        test_output = preruni_dict['model'](preruni_dict['test_embedding'])
+        test_output = preruni_dict['model'](preruni_dict['train_embedding'])
 
         test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
         test_psnr = - 10 * torch.log10(2 * test_loss).item()
