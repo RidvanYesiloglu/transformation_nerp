@@ -183,16 +183,13 @@ def prerun_i_actions(inps_dict, preallruns_dict):
                       'checkpoint_directory':checkpoint_directory, 'optim':optim}
     if args.pretrain:
         with torch.no_grad():
-            test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-    
-            test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-            test_psnr = - 10 * torch.log10(2 * test_loss).item()
-            test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
-            print('PRETRAIN MODEL PSNR:')
-            print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
-            
+            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
+            test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['im_Ius'])
+            test_psnr = - 10 * torch.log10(test_loss).item()
+            print('MODEL PSNR: {:.5f}'.format(test_psnr))
             test_loss = test_loss.item()
-        np.save(os.path.join(inps_dict['save_folder'], 'pretrainmodel_out'), test_output.detach().cpu().numpy())
+        #np.save(os.path.join(inps_dict['save_folder'], 'pretrainmodel_out'), test_output.detach().cpu().numpy())
     return preruni_dict
 
 def print_freq_actions(inps_dict):
@@ -206,12 +203,11 @@ def write_freq_actions(inps_dict, preruni_dict):
     
     preruni_dict['model'].eval()
     with torch.no_grad():
-        test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-
-        test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-        test_psnr = - 10 * torch.log10(2 * test_loss).item()
-        test_psnr2 = PSNR(test_output, preruni_dict['test_data'][1]).item()
-        print('Test psnr: {:.5f}, test psnr2: {:.5f}, equal: {}'.format(test_psnr, test_psnr2, test_psnr==test_psnr2))
+        deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+        deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
+        test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['im_Ius'])
+        test_psnr = - 10 * torch.log10(test_loss).item()
+        print('MODEL PSNR: {:.5f}'.format(test_psnr))
         test_loss = test_loss.item()
 
     # train_writer.add_scalar('test_loss', test_loss, iterations + 1)
@@ -239,16 +235,17 @@ def postrun_i_actions(inps_dict, preallruns_dict, preruni_dict):
 
     preruni_dict['model'].eval()
     with torch.no_grad():
-        test_output = preruni_dict['model'](preruni_dict['test_embedding'])
-
-        test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
-        test_psnr = - 10 * torch.log10(2 * test_loss).item()
+        deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+        deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
+        test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['im_Ius'])
+        test_psnr = - 10 * torch.log10(test_loss).item()
+        print('MODEL PSNR: {:.5f}'.format(test_psnr))
         test_loss = test_loss.item()
 
     # train_writer.add_scalar('test_loss', test_loss, iterations + 1)
     # train_writer.add_scalar('test_psnr', test_psnr, iterations + 1)
     # Must transfer to .cpu() tensor firstly for saving images
-    save_image_3d(test_output, preruni_dict['slice_idx'], os.path.join(preruni_dict['image_directory'], "recon_{}_{:.4g}dB.png".format(inps_dict['t']+1, test_psnr)))
+    #save_image_3d(test_output, preruni_dict['slice_idx'], os.path.join(preruni_dict['image_directory'], "recon_{}_{:.4g}dB.png".format(inps_dict['t']+1, test_psnr)))
     
     r_logs = open(os.path.join(inps_dict['save_folder'], 'logs_{}.txt'.format(inps_dict['run_number'])), "a")
     r_logs.write('Epoch: {}, Train Loss: {:.4f}\n'.format(inps_dict['t']+1,inps_dict['losses_r'][-1]))
