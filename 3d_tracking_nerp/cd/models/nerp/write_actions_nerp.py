@@ -158,10 +158,10 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     # save_image_3d(complex2real(spectrum), slice_idx, os.path.join(image_directory, "spec.png"))
     
     train_embedding = encoder.embedding(train_data[0])  # [B, C, H, W, embedding*2]
-    test_embedding = encoder.embedding(test_data[0])
-    print('Train embedding shape: {}, test embedding shape: {}'.format(train_embedding.shape, test_embedding.shape))
+    #test_embedding = encoder.embedding(test_data[0])
+    #print('Train embedding shape: {}, test embedding shape: {}'.format(train_embedding.shape, test_embedding.shape))
     print('Train embedding eleement size: {} and neleements: {}, size in megabytes: {}'.format(train_embedding.element_size(), train_embedding.nelement(), (train_embedding.element_size()*train_embedding.nelement())/1000000.0))
-    print('Test embedding eleement size: {} and neleements: {}, size in megabytes: {}'.format(test_embedding.element_size(), test_embedding.nelement(), (test_embedding.element_size()*test_embedding.nelement())/1000000.0))
+    #print('Test embedding eleement size: {} and neleements: {}, size in megabytes: {}'.format(test_embedding.element_size(), test_embedding.nelement(), (test_embedding.element_size()*test_embedding.nelement())/1000000.0))
     # print('VERIYORUM GAZI')
     # train_output = model(train_embedding)
     # print('VERDIM GAZI')
@@ -179,7 +179,7 @@ def prerun_i_actions(inps_dict, preallruns_dict):
     main_logs.write(init_thetas_str)
     main_logs.write(init_psnr_str)
     main_logs.close()
-    preruni_dict={'model':model, 'train_embedding':train_embedding, 'test_embedding':test_embedding, 'ktraj':ktraj, 'im_size':im_size, 'grid_size':grid_size, 'spec_loss_fn':spec_loss_fn, \
+    preruni_dict={'model':model, 'train_embedding':train_embedding, 'ktraj':ktraj, 'im_size':im_size, 'grid_size':grid_size, 'spec_loss_fn':spec_loss_fn, \
                   'train_data':train_data, 'mse_loss_fn':mse_loss_fn, 'test_data':test_data, 'slice_idx':slice_idx, 'image_directory':image_directory, \
                       'checkpoint_directory':checkpoint_directory, 'encoder':encoder, 'optim':optim}
     if args.pretrain:
