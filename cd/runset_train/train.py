@@ -131,7 +131,7 @@ def main(args=None, im_ind=None):
                     os.remove(filename)
                 for filename in glob.glob(os.path.join(save_folder, 'savedrec_run{}*'.format(run_number))):
                     os.remove(filename)
-                #np.save(os.path.join(save_folder,'savedrec_run{}_ep{}_{:.4g}dB'.format(run_number, t+1, test_psnr)), test_output.detach().cpu().numpy())
+                np.save(os.path.join(save_folder,'defpr{}_ep{}_{:.4g}dB'.format(run_number, t+1, test_psnr)), deformed_prior.detach().cpu().numpy())
                 model_name = os.path.join(save_folder, 'savedmodel_run{}_ep{}_{:.4g}dB.pt'.format(run_number, t+1, test_psnr))
                 torch.save({'net': preruni_dict['model'].state_dict(), \
                         'enc': preruni_dict['encoder'].B, \
