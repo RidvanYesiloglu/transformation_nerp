@@ -89,7 +89,7 @@ def main(args=None, im_ind=None):
         start_time = time.time()
         
         with torch.no_grad():
-            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['encoder'].embedding(preruni_dict['grid'])))  # [B, C, H, W, 1]
             deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
             test_psnr = - 10 * torch.log10(test_loss).item()
@@ -104,7 +104,7 @@ def main(args=None, im_ind=None):
             preruni_dict['optim'].zero_grad()
             # print('LATEST')
             # check_gpu(args.gpu_id)
-            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+            deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['encoder'].embedding(preruni_dict['grid'])))  # [B, C, H, W, 1]
             deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
             train_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 
@@ -116,7 +116,7 @@ def main(args=None, im_ind=None):
             losses_r.append(train_loss.item())
             
             with torch.no_grad():
-                deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['train_embedding']))  # [B, C, H, W, 1]
+                deformed_grid = preruni_dict['grid'] + (preruni_dict['model'](preruni_dict['encoder'].embedding(preruni_dict['grid'])))  # [B, C, H, W, 1]
                 deformed_prior = preruni_dict['model_Pus'](preruni_dict['encoder_Pus'].embedding(deformed_grid))
                 test_loss = preruni_dict['mse_loss_fn'](deformed_prior, preruni_dict['model_Ius'](preruni_dict['train_embedding_Ius']))
                 test_psnr = - 10 * torch.log10(test_loss).item()
