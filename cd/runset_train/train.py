@@ -96,6 +96,7 @@ def main(args=None, im_ind=None):
             print('STARTING MODEL PSNR: {:.5f}'.format(test_psnr))
             
             # test_loss = test_loss.item()
+        torch.cuda.empty_cache()
         print('after init psnr calc')
         check_gpu(args.gpu_id)
         for t in tqdm(range(args.max_iter)):
