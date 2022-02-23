@@ -87,7 +87,7 @@ def main(args=None, im_ind=None):
         start_time = time.time()
         
         with torch.no_grad():
-            test_output = preruni_dict['model'](preruni_dict['test_embedding'])
+            test_output = preruni_dict['model'](preruni_dict['train_embedding'])
     
             test_loss = 0.5 * preruni_dict['mse_loss_fn'](test_output, preruni_dict['test_data'][1])
             test_psnr = - 10 * torch.log10(2 * test_loss).item()
